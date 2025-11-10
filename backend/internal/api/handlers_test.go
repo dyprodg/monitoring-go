@@ -7,14 +7,16 @@ import (
 	"testing"
 	"time"
 
+	"monitoring-dashboard/internal/actions"
 	"monitoring-dashboard/internal/metrics"
 	"monitoring-dashboard/pkg/models"
 )
 
 func TestHealthHandler(t *testing.T) {
-	// Create collector and handler
+	// Create collector, engine and handler
 	collector := metrics.NewCollector()
-	handler := NewHandler(collector)
+	engine := actions.NewEngine(collector)
+	handler := NewHandler(collector, engine)
 
 	// Create request
 	req := httptest.NewRequest(http.MethodGet, "/api/health", nil)
@@ -51,12 +53,13 @@ func TestHealthHandler(t *testing.T) {
 }
 
 func TestMetricsHandler(t *testing.T) {
-	// Create collector and handler
+	// Create collector, engine and handler
 	collector := metrics.NewCollector()
 	collector.Start(100 * time.Millisecond)
 	time.Sleep(150 * time.Millisecond) // Wait for metrics collection
 
-	handler := NewHandler(collector)
+	engine := actions.NewEngine(collector)
+	handler := NewHandler(collector, engine)
 
 	// Create request
 	req := httptest.NewRequest(http.MethodGet, "/api/metrics", nil)
@@ -98,7 +101,8 @@ func TestMetricsHandler(t *testing.T) {
 
 func TestNewHandler(t *testing.T) {
 	collector := metrics.NewCollector()
-	handler := NewHandler(collector)
+	engine := actions.NewEngine(collector)
+	handler := NewHandler(collector, engine)
 
 	if handler == nil {
 		t.Fatal("NewHandler() returned nil")

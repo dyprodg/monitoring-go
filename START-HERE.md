@@ -159,13 +159,13 @@ docs/                  → Additional docs
 ## ✅ Pre-Flight Checklist
 
 ### Human Checklist
-- [ ] Read MASTER-PLAN.md
-- [ ] Read DECISIONS.md
-- [ ] Read MVP-PLAN.md
-- [ ] Understand success criteria (working demo in 4-6 weeks)
+- [x] Read MASTER-PLAN.md
+- [x] Read DECISIONS.md
+- [x] Read MVP-PLAN.md
+- [x] Understand success criteria (working demo in 4-6 weeks)
 - [x] Know cost ($0 for MVP, ~$10/month for showcase)
 - [x] Have 4-6 weeks available (part-time OK)
-- [ ] Ready to review progress every 2 days
+- [x] Ready to review progress every 2 days
 - [x] Confirmed: Go 1.21+, Node 18+, Docker installed
 
 ### AI Checklist

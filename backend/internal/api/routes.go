@@ -28,6 +28,13 @@ func (h *Handler) SetupRoutes() *chi.Mux {
 	r.Route("/api", func(r chi.Router) {
 		r.Get("/health", h.HealthHandler)
 		r.Get("/metrics", h.MetricsHandler)
+
+		// Action routes
+		r.Route("/actions", func(r chi.Router) {
+			r.Post("/cpu-stress", h.CPUStressHandler)
+			r.Get("/active", h.GetActiveActionsHandler)
+			r.Delete("/{id}/stop", h.StopActionHandler)
+		})
 	})
 
 	return r

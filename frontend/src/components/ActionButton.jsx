@@ -21,6 +21,7 @@ export default function ActionButton({
     blue: "bg-blue-600 hover:bg-blue-700 focus:ring-blue-500",
     red: "bg-red-600 hover:bg-red-700 focus:ring-red-500",
     green: "bg-green-600 hover:bg-green-700 focus:ring-green-500",
+    yellow: "bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500",
     purple: "bg-purple-600 hover:bg-purple-700 focus:ring-purple-500",
   };
 

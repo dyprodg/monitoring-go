@@ -12,6 +12,32 @@ export default function MetricCard({ title, value, unit, history, color = "#3b82
   // Format value to 1 decimal place
   const formattedValue = typeof value === 'number' ? value.toFixed(1) : '0.0';
 
+  // Calculate dynamic Y-axis domain based on data
+  const calculateYDomain = () => {
+    if (!history || history.length === 0) {
+      return [0, 100]; // Default for percentage metrics
+    }
+
+    // For percentage metrics (CPU, Memory), use fixed 0-100 scale
+    if (unit === '%') {
+      return [0, 100];
+    }
+
+    // For other metrics (Disk I/O, Network), use dynamic scale
+    const values = history.map(item => item.value);
+    const maxValue = Math.max(...values);
+    const minValue = Math.min(...values);
+
+    // Add 10% padding to top and bottom for better visualization
+    const padding = (maxValue - minValue) * 0.1 || 10;
+    const yMin = Math.max(0, minValue - padding);
+    const yMax = maxValue + padding;
+
+    return [yMin, yMax];
+  };
+
+  const yDomain = calculateYDomain();
+
   return (
     <div className="bg-slate-800 rounded-lg p-6 shadow-lg border border-slate-700">
       {/* Header */}
@@ -37,11 +63,16 @@ export default function MetricCard({ title, value, unit, history, color = "#3b82
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
               <XAxis
                 dataKey="timestamp"
-                hide={true}
+                tick={{ fill: '#64748b', fontSize: 10 }}
+                stroke="#475569"
+                tickCount={5}
               />
               <YAxis
-                domain={[0, 100]}
-                hide={true}
+                domain={yDomain}
+                tick={{ fill: '#64748b', fontSize: 10 }}
+                stroke="#475569"
+                tickFormatter={(value) => value.toFixed(0)}
+                width={40}
               />
               <Tooltip
                 contentStyle={{
@@ -50,6 +81,7 @@ export default function MetricCard({ title, value, unit, history, color = "#3b82
                   borderRadius: '0.375rem'
                 }}
                 labelStyle={{ color: '#94a3b8' }}
+                formatter={(value) => [`${value.toFixed(1)} ${unit}`, title]}
               />
               <Line
                 type="monotone"

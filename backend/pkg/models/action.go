@@ -40,6 +40,25 @@ type CPUStressRequest struct {
 	DurationSeconds int `json:"duration_seconds"` // Duration in seconds (max 30)
 }
 
+// MemorySurgeRequest represents a request to start memory surge
+type MemorySurgeRequest struct {
+	SizeMB          int `json:"size_mb"`          // Memory size in MB (max 25% of total RAM)
+	DurationSeconds int `json:"duration_seconds"` // Duration in seconds (max 60)
+}
+
+// DiskStormRequest represents a request to start disk storm
+type DiskStormRequest struct {
+	Operations int `json:"operations"`   // Number of file operations (max 10000)
+	FileSizeKB int `json:"file_size_kb"` // File size in KB (max 1024)
+}
+
+// TrafficFloodRequest represents a request to start traffic flood
+type TrafficFloodRequest struct {
+	RequestsPerSec  int    `json:"requests_per_sec"`  // Requests per second (max 1000)
+	DurationSeconds int    `json:"duration_seconds"`  // Duration in seconds (max 60)
+	TargetURL       string `json:"target_url"`        // Target URL (optional, defaults to dummy endpoint)
+}
+
 // ActionResponse is the response after starting an action
 type ActionResponse struct {
 	ID        string     `json:"id"`

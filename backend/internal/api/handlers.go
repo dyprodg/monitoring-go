@@ -93,6 +93,111 @@ func (h *Handler) GetActiveActionsHandler(w http.ResponseWriter, r *http.Request
 	json.NewEncoder(w).Encode(response)
 }
 
+// MemorySurgeHandler starts a memory surge action
+func (h *Handler) MemorySurgeHandler(w http.ResponseWriter, r *http.Request) {
+	var req models.MemorySurgeRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Create memory surge action
+	memAction, err := actions.NewMemorySurgeAction(req.SizeMB, req.DurationSeconds)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Start action
+	action, err := h.engine.StartAction(models.ActionTypeMemorySurge, memAction)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Return response
+	response := models.ActionResponse{
+		ID:        action.ID,
+		Status:    string(action.Status),
+		StartedAt: action.StartedAt,
+		Message:   "Memory surge action started",
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(response)
+}
+
+// DiskStormHandler starts a disk storm action
+func (h *Handler) DiskStormHandler(w http.ResponseWriter, r *http.Request) {
+	var req models.DiskStormRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Create disk storm action
+	diskAction, err := actions.NewDiskStormAction(req.Operations, req.FileSizeKB)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Start action
+	action, err := h.engine.StartAction(models.ActionTypeDiskStorm, diskAction)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Return response
+	response := models.ActionResponse{
+		ID:        action.ID,
+		Status:    string(action.Status),
+		StartedAt: action.StartedAt,
+		Message:   "Disk storm action started",
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(response)
+}
+
+// TrafficFloodHandler starts a traffic flood action
+func (h *Handler) TrafficFloodHandler(w http.ResponseWriter, r *http.Request) {
+	var req models.TrafficFloodRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Create traffic flood action
+	trafficAction, err := actions.NewTrafficFloodAction(req.RequestsPerSec, req.DurationSeconds, req.TargetURL)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Start action
+	action, err := h.engine.StartAction(models.ActionTypeTrafficFlood, trafficAction)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Return response
+	response := models.ActionResponse{
+		ID:        action.ID,
+		Status:    string(action.Status),
+		StartedAt: action.StartedAt,
+		Message:   "Traffic flood action started",
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(response)
+}
+
 // StopActionHandler stops a running action
 func (h *Handler) StopActionHandler(w http.ResponseWriter, r *http.Request) {
 	actionID := chi.URLParam(r, "id")

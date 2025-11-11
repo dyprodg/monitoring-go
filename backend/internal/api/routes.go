@@ -32,6 +32,9 @@ func (h *Handler) SetupRoutes() *chi.Mux {
 		// Action routes
 		r.Route("/actions", func(r chi.Router) {
 			r.Post("/cpu-stress", h.CPUStressHandler)
+			r.Post("/memory-surge", h.MemorySurgeHandler)
+			r.Post("/disk-storm", h.DiskStormHandler)
+			r.Post("/traffic-flood", h.TrafficFloodHandler)
 			r.Get("/active", h.GetActiveActionsHandler)
 			r.Delete("/{id}/stop", h.StopActionHandler)
 		})

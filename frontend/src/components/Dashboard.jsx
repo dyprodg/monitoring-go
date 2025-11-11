@@ -1,7 +1,13 @@
 import { useState, useEffect } from 'react';
 import MetricCard from './MetricCard';
 import ActionButton from './ActionButton';
-import { fetchMetrics, startCPUStress } from '../services/api';
+import {
+  fetchMetrics,
+  startCPUStress,
+  startMemorySurge,
+  startDiskStorm,
+  startTrafficFlood
+} from '../services/api';
 
 const POLLING_INTERVAL = 1000; // 1 second
 const MAX_HISTORY_LENGTH = 60; // Keep 60 seconds of history
@@ -10,6 +16,8 @@ export default function Dashboard() {
   const [metrics, setMetrics] = useState(null);
   const [cpuHistory, setCpuHistory] = useState([]);
   const [memoryHistory, setMemoryHistory] = useState([]);
+  const [diskHistory, setDiskHistory] = useState([]);
+  const [networkHistory, setNetworkHistory] = useState([]);
   const [error, setError] = useState(null);
 
   // Poll metrics every second
@@ -45,6 +53,30 @@ export default function Dashboard() {
           return newHistory.slice(-MAX_HISTORY_LENGTH);
         });
 
+        // Update Disk I/O history
+        setDiskHistory(prev => {
+          const newHistory = [
+            ...prev,
+            {
+              timestamp: new Date(data.timestamp).toLocaleTimeString(),
+              value: data.disk_io
+            }
+          ];
+          return newHistory.slice(-MAX_HISTORY_LENGTH);
+        });
+
+        // Update Network history
+        setNetworkHistory(prev => {
+          const newHistory = [
+            ...prev,
+            {
+              timestamp: new Date(data.timestamp).toLocaleTimeString(),
+              value: data.network
+            }
+          ];
+          return newHistory.slice(-MAX_HISTORY_LENGTH);
+        });
+
       } catch (err) {
         setError(err.message);
         console.error('Failed to poll metrics:', err);
@@ -72,6 +104,39 @@ export default function Dashboard() {
     }
   };
 
+  // Handle Memory surge button click
+  const handleMemorySurge = async () => {
+    try {
+      const response = await startMemorySurge(500, 30);
+      console.log('Memory surge started:', response);
+    } catch (err) {
+      console.error('Failed to start memory surge:', err);
+      alert(`Failed to start memory surge: ${err.message}`);
+    }
+  };
+
+  // Handle Disk storm button click
+  const handleDiskStorm = async () => {
+    try {
+      const response = await startDiskStorm(1000, 10);
+      console.log('Disk storm started:', response);
+    } catch (err) {
+      console.error('Failed to start disk storm:', err);
+      alert(`Failed to start disk storm: ${err.message}`);
+    }
+  };
+
+  // Handle Traffic flood button click
+  const handleTrafficFlood = async () => {
+    try {
+      const response = await startTrafficFlood(100, 10);
+      console.log('Traffic flood started:', response);
+    } catch (err) {
+      console.error('Failed to start traffic flood:', err);
+      alert(`Failed to start traffic flood: ${err.message}`);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-900 p-8">
       <div className="max-w-7xl mx-auto">
@@ -93,7 +158,7 @@ export default function Dashboard() {
         )}
 
         {/* Metrics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <MetricCard
             title="CPU Usage"
             value={metrics?.cpu || 0}
@@ -108,6 +173,20 @@ export default function Dashboard() {
             history={memoryHistory}
             color="#10b981"
           />
+          <MetricCard
+            title="Disk I/O"
+            value={metrics?.disk_io || 0}
+            unit="ops/s"
+            history={diskHistory}
+            color="#f59e0b"
+          />
+          <MetricCard
+            title="Network"
+            value={metrics?.network || 0}
+            unit="MB/s"
+            history={networkHistory}
+            color="#8b5cf6"
+          />
         </div>
 
         {/* Actions */}
@@ -115,12 +194,30 @@ export default function Dashboard() {
           <h2 className="text-2xl font-semibold text-white mb-4">
             Load Actions
           </h2>
-          <div className="flex flex-wrap gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <ActionButton
               label="CPU Stress"
               emoji="🔥"
               onClick={handleCPUStress}
               color="red"
+            />
+            <ActionButton
+              label="Memory Surge"
+              emoji="💾"
+              onClick={handleMemorySurge}
+              color="green"
+            />
+            <ActionButton
+              label="Disk Storm"
+              emoji="💿"
+              onClick={handleDiskStorm}
+              color="yellow"
+            />
+            <ActionButton
+              label="Traffic Flood"
+              emoji="🌐"
+              onClick={handleTrafficFlood}
+              color="purple"
             />
           </div>
         </div>

@@ -50,6 +50,100 @@ export async function startCPUStress(targetPercent, durationSeconds) {
 }
 
 /**
+ * Start a memory surge action
+ * @param {number} sizeMB - Memory size in MB
+ * @param {number} durationSeconds - Duration in seconds (1-60)
+ * @returns {Promise<Object>} Action response
+ */
+export async function startMemorySurge(sizeMB, durationSeconds) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/actions/memory-surge`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        size_mb: sizeMB,
+        duration_seconds: durationSeconds,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Failed to start memory surge:', error);
+    throw error;
+  }
+}
+
+/**
+ * Start a disk storm action
+ * @param {number} operations - Number of file operations
+ * @param {number} fileSizeKB - File size in KB
+ * @returns {Promise<Object>} Action response
+ */
+export async function startDiskStorm(operations, fileSizeKB) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/actions/disk-storm`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        operations: operations,
+        file_size_kb: fileSizeKB,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Failed to start disk storm:', error);
+    throw error;
+  }
+}
+
+/**
+ * Start a traffic flood action
+ * @param {number} requestsPerSec - Requests per second
+ * @param {number} durationSeconds - Duration in seconds (1-60)
+ * @returns {Promise<Object>} Action response
+ */
+export async function startTrafficFlood(requestsPerSec, durationSeconds) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/actions/traffic-flood`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        requests_per_sec: requestsPerSec,
+        duration_seconds: durationSeconds,
+        target_url: '', // Will use default
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Failed to start traffic flood:', error);
+    throw error;
+  }
+}
+
+/**
  * Get all active actions
  * @returns {Promise<Object>} Active actions
  */

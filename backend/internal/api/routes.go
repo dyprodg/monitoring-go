@@ -36,6 +36,7 @@ func (h *Handler) SetupRoutes() *chi.Mux {
 			r.Post("/disk-storm", h.DiskStormHandler)
 			r.Post("/traffic-flood", h.TrafficFloodHandler)
 			r.Get("/active", h.GetActiveActionsHandler)
+			r.Post("/stop-all", h.StopAllActionsHandler)
 			r.Delete("/{id}/stop", h.StopActionHandler)
 		})
 	})

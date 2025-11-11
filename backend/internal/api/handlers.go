@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -215,6 +216,20 @@ func (h *Handler) StopActionHandler(w http.ResponseWriter, r *http.Request) {
 	response := map[string]string{
 		"status":  "stopped",
 		"message": "Action stopped successfully",
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
+// StopAllActionsHandler stops all running actions
+func (h *Handler) StopAllActionsHandler(w http.ResponseWriter, r *http.Request) {
+	count := h.engine.StopAllActions()
+
+	response := map[string]interface{}{
+		"status":  "stopped",
+		"message": fmt.Sprintf("Stopped %d action(s)", count),
+		"count":   count,
 	}
 
 	w.Header().Set("Content-Type", "application/json")

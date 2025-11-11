@@ -226,6 +226,23 @@ func (e *Engine) GetActiveActions() []*models.Action {
 	return active
 }
 
+// StopAllActions stops all currently running actions
+func (e *Engine) StopAllActions() int {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
+	count := 0
+	for _, actionCtx := range e.actions {
+		if actionCtx.action.Status == models.ActionStatusStarting ||
+			actionCtx.action.Status == models.ActionStatusRunning {
+			actionCtx.cancel()
+			count++
+		}
+	}
+
+	return count
+}
+
 // Cleanup removes completed actions
 func (e *Engine) Cleanup() {
 	e.mu.Lock()
